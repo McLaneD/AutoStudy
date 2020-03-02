@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "一键🍴🐔",
-  "version": "0.1.1",
+  "version": "0.0.1",
   "description": "自动学习程序",
   "background": {
     "scripts": [
@@ -9,11 +9,10 @@
     ],
     "persistent": true
   },
-  "icons":
-  {
-      "16": "/img/icon16.png",
-      "48": "/img/icon48.png",
-      "128":"/img/icon128.png"
+  "icons": {
+    "16": "/img/icon16.png",
+    "48": "/img/icon48.png",
+    "128": "/img/icon128.png"
   },
   "browser_action": {
     "default_icon": "/img/icon128.png",
@@ -22,13 +21,15 @@
   },
   "permissions": [
     "<all_urls>",
-    "contextMenus",
     "tabs",
     "notifications",
     "webRequest",
     "webRequestBlocking",
     "storage"
   ],
-  "web_accessible_resources": [],
+  "options_ui": {
+    "page": "options.html",
+    "chrome_style": true
+  },
   "homepage_url": "https://www.baidu.com"
 }
