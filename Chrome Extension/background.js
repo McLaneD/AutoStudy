@@ -1,15 +1,14 @@
 chrome.webRequest.onBeforeRequest.addListener((details) => {
-    
+
     // TODO 浙江省其它地域域名是否同https://linan.learning.gov.cn/study/
 
     if (details.url.indexOf("playcourse.js") != -1) {
         let url = "";
         let xhr = new XMLHttpRequest();
-        xhr.open('get', "/js/study/playcourse.js", false);
+        xhr.open('get', "/assert/playcourse.js", false);
         xhr.send(null);
         let content = xhr.responseText || xhr.responseXML;
         if (!content) {
-            console.log("aaa111");
             return false;
         }
         content = encodeURIComponent(
