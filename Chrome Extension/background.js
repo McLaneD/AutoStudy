@@ -26,8 +26,8 @@ chrome.webRequest.onBeforeRequest.addListener((details) => {
         if (url.indexOf(key) !== -1) {
             var arr = url.split('.');
             let sufixContent = arr[arr.length - 1];
-            var type = typeMap[sufixContent.substr(0, sufixContent.indexOf("?"))];
-
+            if (sufixContent.indexOf("?") !== -1) sufixContent = sufixContent.substr(0, sufixContent.indexOf("?"));
+            var type = typeMap[sufixContent];
             let xhr = new XMLHttpRequest();
             xhr.open('get', fileMap.get(key), false);
             xhr.send(null);
