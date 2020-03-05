@@ -1,4 +1,7 @@
 body {
-    min-width: 100%;
-    padding: 10px;
+    min-width: 300px;
   }
+
+.form-group{
+  display: flex
+}
