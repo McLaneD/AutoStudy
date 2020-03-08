@@ -78,6 +78,14 @@ autoStudy_popup.controller("popupCtrl", function ($scope, $http, $httpParamSeria
         $scope.refreshCaptcha();
     }
 
+    $scope.continueStudy = function () {
+
+    }
+
+    $scope.pauseStudy = function () {
+
+    }
+
     $scope.selectLessons = function () {
         chrome.tabs.create({ url: "chrome-extension://" + chrome.runtime.id + "/options.html" });
     }
