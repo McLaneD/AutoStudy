@@ -14,9 +14,9 @@
 
 <body ng-controller="popupCtrl">
     <div class="container">
-        <div class="modal-body">
+        <div ng-show="currentDiv === popupDivs.loginDiv" class="modal-body">
             <form class="form-horizontal" role="form">
-                <div class="form-group login-form">
+                <div class="form-group">
                     <label for="password" class="control-label" style="width: 60px;">账号</label>
                     <input type="text" class="form-control" ng-model="loginUser.username">
                 </div>
@@ -27,12 +27,26 @@
                 <div class="form-group">
                     <label for="captcha" class="control-label" style="width: 110px;">验证码</label>
                     <input type="text" class="form-control" ng-model="loginUser.captcha">
-                    <img ng-src="https://linan.learning.gov.cn/system/akey_img.php" style="margin-left: 10px;">
+                    <img style="margin-left: 10px;" ng-src="{{captchaUrl}}" ng-click="refreshCaptcha()">
                 </div>
-                <div class="col-sm-offset-12 col-sm-12">
-                    <button class="btn btn-default btn-block btn-primary" ng-click="mockLogin()">登录</button>
+                <div class="alert alert-danger alert-dismissible" ng-show="isShowAlertBox" role="alert">
+                    <button type="button" class="close" ng-click="hideAlertBox()">
+                        <span aria-hidden="false">&times;</span></button>
+                    {{errorMsg}}
                 </div>
+                <form class="form-group">
+                    <button class="btn btn-default btn-block btn-primary" ng-click="login()">登录</button>
+                </form>
             </form>
+        </div>
+        <div ng-show="currentDiv === popupDivs.infoDiv" class="modal-body">
+            <div class="form-group">
+                <label for="password" class="control-label">欢迎回来! {{loginInfo.name}}{{loginInfo.gender}}</label>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-success infobtn" ng-click="selectLessons()">选课</button>
+                <button class="btn btn-danger infobtn" ng-click="logout()">注销</button>
+            </div>
         </div>
     </div>
 </body>

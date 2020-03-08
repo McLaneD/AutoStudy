@@ -24,12 +24,11 @@
     "chrome_style": true
   },
   "permissions": [
-    "<all_urls>",
-    "tabs",
+    "*://*.learning.gov.cn/*",
     "notifications",
-    "webRequest",
-    "webRequestBlocking",
-    "storage"
+    "storage",
+    "cookies",
+    "tabs"
   ],
   "homepage_url": "https://www.baidu.com"
 }
