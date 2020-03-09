@@ -6,11 +6,15 @@ body {
   display: flex
 }
 
+.ibtn-group{
+  margin-bottom: 0px;
+}
+
 .form-horizontal label{
   margin-top: 7px;
 }
 
 .infobtn{
-  width: 80px;
-  margin: 0px 0px 0px 26px;
+  width: 70px;
+  margin: 0px 0px 0px 3px;
 }

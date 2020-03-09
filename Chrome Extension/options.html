@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html ng-app="autoStudy_options">
+<html lang="en" ng-app="autoStudy_options">
 
 <head>
     <meta charset="UTF-8">
@@ -16,43 +16,71 @@
 <body ng-controller="optionsCtrl">
     <div class="container">
         <div class="row">
-            <div class="col-md-12">
-                <nav class="navbar navbar-fixed-top" role="navigation">
-                    <div class="container">
-                        <div class="navbar-header">
-                            <a class="navbar-brand " href="#">后台管理系统</a>
-                        </div>
-                        <div id="navbar" class="navbar-right">
-                            <a class="navbar-brand" href="#">当前用户：xx</a>
-                        </div>
-                    </div>
-                </nav>
+            <div class="navbar-left" style="margin-top: 7px;">
+                <span class="text-info" style="font-size: 20px;">公务🐵学习助手</span>
+            </div>
+            <div class="navbar-right">
+                <span class="text-info" style="font-size:30px">当前用户：{{loginInfo.name}}</span>
             </div>
         </div>
-        <div class="row" style="padding-top: 45px">
-            <div class="col-md-3">
-                <div class="list-group">
-                    <!--激活，作为标题-->
-                    <a href="#" class="list-group-item active ">
-                        系统菜单
-                    </a>
-                    <a href="#" class="list-group-item">管理一</a>
-                    <a href="#" class="list-group-item">管理二</a>
-                    <a href="#" class="list-group-item">管理三</a>
-                    <a href="#" class="list-group-item">管理四</a>
-                    <a href="#" class="list-group-item">退出</a>
+        <div class="row" style="padding-top: 30px;">
+            <table class="table table-bordered table-condensed table-striped">
+                <thead>
+                    <tr>
+                        <th style="text-align: center;">
+                            <input type="checkbox" ng-model="checkStatus" ng-change="selChanged()">
+                        </th>
+                        <th>课程ID</th>
+                        <th>课程名称</th>
+                        <th>已学时间</th>
+                        <th>课程类别</th>
+                        <th>学时</th>
+                        <th>学分</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="course in pageData">
+                        <td style="text-align: center;">
+                            <input type="checkbox" ng-model="course._checked" ng-checked="course._checked"
+                                ng-change="dataSelChanged(course)">
+                        </td>
+                        <td>{{course.courseID}}</td>
+                        <td>{{course.courseName}}</td>
+                        <td>{{course.studiedTime}}</td>
+                        <td>{{course.courseType}}</td>
+                        <td>{{course.courseHour}}</td>
+                        <td>{{course.courseCredit}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group ibtn-group">
+                    <button class="btn btn-success btn-sm infobtn" ng-click="confirmCourses()"
+                        style="margin-top: 22px;">确认选课</button>
                 </div>
             </div>
-            <div class="col-md-9">
-                <div>
-                    <ol class="breadcrumb">
-                        <li><span class="glyphicon glyphicon-home"></span>&nbsp;<a href="#">主页</a></li>
-                        <li class="active"></li>
-                    </ol>
-                </div>
-                <div style="padding-top: 50px; text-align: center;">
-                    <h1>后台管理系统</h1>
-                </div>
+            <div class="col-md-6">
+                <nav style="float: right;">
+                    <!-- 第 1 - 10 条, 共 50 条 -->
+                    <ul class="pagination">
+                        <li>
+                            <a ng-click="previousPage()">
+                                <span>上一页</span>
+                            </a>
+                        </li>
+                        <li ng-repeat="page in pagination.pageList"
+                            ng-class="{active: pagination.currentPage === page}">
+                            <a ng-click="selectPage(page)">{{ page }}</a>
+                        </li>
+                        <li>
+                            <a ng-click="nextPage()">
+                                <span>下一页</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
         </div>
     </div>

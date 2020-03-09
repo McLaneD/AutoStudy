@@ -1,14 +1,23 @@
 "use strict";
 
-/*
-TODO 异常待查: retrieveAllCourses Line: 36, TypeError: Cannot read property 'children' of undefined
-*/
+var app = angular.module("autoStudy_options", []);
 
-var autoStudy_options = angular.module("autoStudy_options", []);
-
-autoStudy_options.controller("optionsCtrl", function ($scope, $http) {
+app.controller("optionsCtrl", function ($scope, $http) {
 
     const coursesUrl = "https://linan.learning.gov.cn/study/index.php?act=studycourselist";
+    const indexUrl = "https://linan.learning.gov.cn";
+
+    const initScopeVariables = function () {
+        $scope.loginInfo = {};
+        $scope.pageData = [];
+        $scope.pagination = { currentPage: 1, dataSize: 0, pageList: [], pageSize: 10, startIndex: 0, endIndex: 0 };
+    }
+
+    const initPagination = function () {
+        let dataSize = $scope.courses.length;
+        $scope.pagination.dataSize = dataSize;
+        for (let i = 1; i <= Math.ceil(dataSize / $scope.pagination.pageSize); i++) $scope.pagination.pageList.push(i);
+    };
 
     const parseCoursesData = function (currentPage, pageNums, coursesArray) {
         let pageCourseUrl = coursesUrl + "&offset=" + currentPage;
@@ -20,7 +29,7 @@ autoStudy_options.controller("optionsCtrl", function ($scope, $http) {
                 if ("考试课程" !== courseType) {
                     coursesArray.push({
                         courseID: element.children[0].children[0].getAttribute("href").substr(39),
-                        courseName: element.children[0].innerText,
+                        courseName: element.children[0].children[0].getAttribute("title"),
                         studiedTime: element.children[1].innerText,
                         courseType: courseType,
                         courseHour: element.children[3].innerText,
@@ -29,7 +38,12 @@ autoStudy_options.controller("optionsCtrl", function ($scope, $http) {
                 }
             }
             if (currentPage < pageNums) parseCoursesData(++currentPage, pageNums, coursesArray);
-            else console.log(coursesArray);
+            else {
+                $scope.courses = coursesArray;
+                initPagination();
+                $scope.selectPage(1);
+                $scope.$applyAsync();
+            }
         });
     }
 
@@ -41,6 +55,55 @@ autoStudy_options.controller("optionsCtrl", function ($scope, $http) {
         });
     }
 
-    retrieveAllCourses();
+    const initOptionPage = function () {
+        chrome.cookies.get({ url: indexUrl, name: "__onlineflag__" }, (cookie) => {
+            if (null !== cookie) {
+                chrome.storage.local.get("loginInfo", (val) => {
+                    $scope.loginInfo.name = val.loginInfo.name;
+                    $scope.loginInfo.gender = val.loginInfo.gender;
+                    retrieveAllCourses();
+                });
+            }
+        });
+    }
+
+    $scope.selChanged = function () {
+        $scope.pageData.forEach(e => e._checked = $scope.checkStatus);
+    }
+
+    $scope.previousPage = function () {
+        $scope.selectPage($scope.pagination.currentPage - 1);
+    }
+
+    $scope.nextPage = function () {
+        $scope.selectPage($scope.pagination.currentPage + 1);
+    }
+
+    $scope.selectPage = function (page) {
+        if (page > 0 && page <= $scope.pagination.pageList.length) {
+            $scope.checkStatus = false;
+            $scope.pageData = [];
+            $scope.pagination.currentPage = page;
+            let selectAll = true;
+            for (let i = (page - 1) * $scope.pagination.pageSize; i < (page * $scope.pagination.pageSize); i++) {
+                if (i == $scope.courses.length) break;
+                if (!$scope.courses[i]._checked) selectAll = false;
+                $scope.pageData.push($scope.courses[i]);
+            }
+            if (selectAll) $scope.checkStatus = true;
+        }
+    }
+
+    $scope.dataSelChanged = function (course) {
+        if (!course._checked) $scope.checkStatus = false;
+    }
+
+    $scope.confirmCourses = function () {
+
+    }
+
+    initScopeVariables();
+
+    initOptionPage();
 
 });

@@ -1,8 +1,8 @@
 "use strict";
 
-var autoStudy_popup = angular.module("autoStudy_popup", []);
+var app = angular.module("autoStudy_popup", []);
 
-autoStudy_popup.controller("popupCtrl", function ($scope, $http, $httpParamSerializerJQLike) {
+app.controller("popupCtrl", function ($scope, $http, $httpParamSerializerJQLike) {
 
     const captchaUrl = "https://linan.learning.gov.cn/system/akey_img.php?";
     const indexUrl = "https://linan.learning.gov.cn";
@@ -15,7 +15,7 @@ autoStudy_popup.controller("popupCtrl", function ($scope, $http, $httpParamSeria
             chrome.storage.local.get("loginInfo", (val) => {
                 $scope.loginInfo.name = val.loginInfo.name;
                 $scope.loginInfo.gender = val.loginInfo.gender;
-                $scope.$apply();
+                $scope.$applyAsync();
             });
         }
     }

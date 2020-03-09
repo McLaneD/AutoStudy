@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html ng-app="autoStudy_popup">
+<html lang="en" ng-app="autoStudy_popup">
 
 <head>
     <meta charset="UTF-8">
@@ -43,13 +43,13 @@
             <div class="form-group">
                 <label for="password" class="control-label">欢迎回来! {{loginInfo.name}}{{loginInfo.gender}}</label>
             </div>
-            <div class="form-group">
-                <button class="btn btn-info infobtn" ng-click="continueStudy()">继续学习</button>
-                <button class="btn btn-warning infobtn" ng-click="pauseStudy()">暂停学习</button>
+            <div class="form-group ibtn-group">
+                <button class="btn btn-info btn-sm infobtn" ng-click="continueStudy()">继续学习</button>
+                <button class="btn btn-warning btn-sm infobtn" ng-click="pauseStudy()">暂停学习</button>
+                <button class="btn btn-success btn-sm infobtn" ng-click="selectLessons()">选课</button>
+                <button class="btn btn-danger btn-sm infobtn" ng-click="logout()">注销</button>
             </div>
             <div class="form-group">
-                <button class="btn btn-success infobtn" ng-click="selectLessons()">选课</button>
-                <button class="btn btn-danger infobtn" ng-click="logout()">注销</button>
             </div>
         </div>
     </div>
