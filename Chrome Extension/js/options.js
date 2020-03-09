@@ -1,5 +1,9 @@
 "use strict";
 
+/*
+TODO 异常待查: retrieveAllCourses Line: 36, TypeError: Cannot read property 'children' of undefined
+*/
+
 var autoStudy_options = angular.module("autoStudy_options", []);
 
 autoStudy_options.controller("optionsCtrl", function ($scope, $http) {

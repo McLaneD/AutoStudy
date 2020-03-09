@@ -4,10 +4,7 @@
   "version": "0.0.1",
   "description": "自动学习, 一键🍴🐔",
   "background": {
-    "scripts": [
-      "background.js"
-    ],
-    "persistent": true
+    "page": "background.html"
   },
   "icons": {
     "16": "/img/icon16.png",

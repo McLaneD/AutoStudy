@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title></title>
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css" />
     <link rel="stylesheet" href="css/bootstrap.min.css" media="screen" />
     <link rel="stylesheet" href="css/options.css" media="screen" />
     <script type="text/javascript" src="js/libs/angular.min.js"></script>
@@ -13,6 +14,48 @@
 </head>
 
 <body ng-controller="optionsCtrl">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <nav class="navbar navbar-fixed-top" role="navigation">
+                    <div class="container">
+                        <div class="navbar-header">
+                            <a class="navbar-brand " href="#">后台管理系统</a>
+                        </div>
+                        <div id="navbar" class="navbar-right">
+                            <a class="navbar-brand" href="#">当前用户：xx</a>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <div class="row" style="padding-top: 45px">
+            <div class="col-md-3">
+                <div class="list-group">
+                    <!--激活，作为标题-->
+                    <a href="#" class="list-group-item active ">
+                        系统菜单
+                    </a>
+                    <a href="#" class="list-group-item">管理一</a>
+                    <a href="#" class="list-group-item">管理二</a>
+                    <a href="#" class="list-group-item">管理三</a>
+                    <a href="#" class="list-group-item">管理四</a>
+                    <a href="#" class="list-group-item">退出</a>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <div>
+                    <ol class="breadcrumb">
+                        <li><span class="glyphicon glyphicon-home"></span>&nbsp;<a href="#">主页</a></li>
+                        <li class="active"></li>
+                    </ol>
+                </div>
+                <div style="padding-top: 50px; text-align: center;">
+                    <h1>后台管理系统</h1>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

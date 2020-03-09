@@ -1,0 +1,16 @@
+body {
+    padding: 20px;
+}
+
+.headLeft {
+    float: left;
+}
+
+.headRight {
+    padding-top: 40px;
+    padding-left: 340px;
+}
+
+.search {
+    margin-bottom: 10px;
+}
