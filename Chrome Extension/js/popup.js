@@ -116,6 +116,6 @@ app.controller("popupCtrl", function ($scope, $http, $httpParamSerializerJQLike)
 
 });
 
-function getBackGroundPage() {
+function getBP() {
     return chrome.extension.getBackgroundPage();
 }
