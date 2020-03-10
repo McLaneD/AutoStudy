@@ -55,15 +55,19 @@
             </table>
         </div>
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-1">
                 <div class="form-group ibtn-group">
-                    <button class="btn btn-success btn-sm infobtn" ng-click="confirmCourses()"
-                        style="margin-top: 22px;">确认选课</button>
+                    <a class="btn btn-success btn-sm infobtn" ng-click="confirmCourses()"
+                        style="margin-top: 22px;">确认选课</a>
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-3">
+                <div style="margin-top: 27px;">
+                    <span>找到{{pagination.dataSize}}条数据, 当前第{{pagination.startIndex}}条 - {{pagination.endIndex}}条</span>
+                </div>
+            </div>
+            <div class="col-md-8">
                 <nav style="float: right;">
-                    <!-- 第 1 - 10 条, 共 50 条 -->
                     <ul class="pagination">
                         <li>
                             <a ng-click="previousPage()">
@@ -82,6 +86,33 @@
                     </ul>
                 </nav>
             </div>
+        </div>
+    </div>
+    <!-- Dialog Box -->
+    <div id="modalMsg" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <a type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></a>
+                    <h4 class="modal-title" id="gridSystemModalLabel">提示</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">是否确认选课?</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a type="button" class="btn btn-default" data-dismiss="modal">取消</a>
+                    <a type="button" class="btn btn-primary">确认</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Loading Effects -->
+    <div id="loadingModal" class="modal fade" backdrop="static" keyboard="false">
+        <div class="loadingDiv">
+            <div class="progress progress-striped active loadingContent">数据加载中,请稍候...</div>
         </div>
     </div>
 </body>

@@ -14,3 +14,30 @@ body {
 .search {
     margin-bottom: 10px;
 }
+
+.loadingDiv{
+    width: 200px;
+    height: 100px;
+    z-index: 20000;
+    position: absolute;
+    text-align: center;
+    left: 50%;
+    top: 50%;
+    margin-left: -100px;
+    margin-top: -10px
+}
+
+.loadingContent{
+    margin-bottom: 0;
+    height: 50px;
+    text-align: center;
+    line-height: 50px;
+    font-size: large;
+}
+
+#modalMsg {
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   transform: translateX(-50%) translateY(-50%);
+}

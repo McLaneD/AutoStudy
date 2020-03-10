@@ -2,7 +2,11 @@
 
 var app = angular.module("autoStudy_options", []);
 
+getBP().test11();
+
 app.controller("optionsCtrl", function ($scope, $http) {
+
+    $('#loadingModal').modal({ backdrop: 'static', keyboard: false });
 
     const coursesUrl = "https://linan.learning.gov.cn/study/index.php?act=studycourselist";
     const indexUrl = "https://linan.learning.gov.cn";
@@ -44,6 +48,7 @@ app.controller("optionsCtrl", function ($scope, $http) {
                 $scope.selectPage(1);
                 $scope.$applyAsync();
             }
+            $('#loadingModal').modal('hide');
         });
     }
 
@@ -85,7 +90,9 @@ app.controller("optionsCtrl", function ($scope, $http) {
             $scope.pageData = [];
             $scope.pagination.currentPage = page;
             let selectAll = true;
-            for (let i = (page - 1) * $scope.pagination.pageSize; i < (page * $scope.pagination.pageSize); i++) {
+            $scope.pagination.startIndex = (page - 1) * $scope.pagination.pageSize + 1;
+            $scope.pagination.endIndex = page * $scope.pagination.pageSize;
+            for (let i = $scope.pagination.startIndex - 1; i < $scope.pagination.endIndex; i++) {
                 if (i == $scope.courses.length) break;
                 if (!$scope.courses[i]._checked) selectAll = false;
                 $scope.pageData.push($scope.courses[i]);
@@ -99,7 +106,7 @@ app.controller("optionsCtrl", function ($scope, $http) {
     }
 
     $scope.confirmCourses = function () {
-
+        $('#modalMsg').modal('show');
     }
 
     initScopeVariables();
@@ -107,3 +114,7 @@ app.controller("optionsCtrl", function ($scope, $http) {
     initOptionPage();
 
 });
+
+function getBP() {
+    return chrome.extension.getBackgroundPage();
+}

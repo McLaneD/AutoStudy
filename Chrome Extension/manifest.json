@@ -4,7 +4,10 @@
   "version": "0.0.1",
   "description": "自动学习, 一键🍴🐔",
   "background": {
-    "page": "background.html"
+    "scripts": [
+      "js/components/jquery-3.4.1.min.js",
+      "js/background.js"
+    ]
   },
   "icons": {
     "16": "/img/icon16.png",
@@ -22,10 +25,8 @@
   },
   "permissions": [
     "*://*.learning.gov.cn/*",
-    "notifications",
     "storage",
-    "cookies",
-    "tabs"
+    "cookies"
   ],
   "homepage_url": "https://en.wikipedia.org/wiki/List_of_freedom_indices"
 }
