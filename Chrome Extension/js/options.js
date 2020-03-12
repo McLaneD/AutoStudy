@@ -2,8 +2,6 @@
 
 var app = angular.module("autoStudy_options", []);
 
-getBP().test11();
-
 app.controller("optionsCtrl", function ($scope, $http) {
 
     $('#loadingModal').modal({ backdrop: 'static', keyboard: false });
@@ -15,6 +13,7 @@ app.controller("optionsCtrl", function ($scope, $http) {
         $scope.loginInfo = {};
         $scope.pageData = [];
         $scope.pagination = { currentPage: 1, dataSize: 0, pageList: [], pageSize: 10, startIndex: 0, endIndex: 0 };
+        $scope.appTitle = chrome.runtime.getManifest().name;
     }
 
     const initPagination = function () {
@@ -72,6 +71,12 @@ app.controller("optionsCtrl", function ($scope, $http) {
         });
     }
 
+    const getSelCourses = function () {
+        let selCourses = [];
+        $scope.courses.forEach(e => { if (e._checked) selCourses.push({ courseID: e.courseID, courseName: e.courseName }) });
+        return selCourses;
+    }
+
     $scope.selChanged = function () {
         $scope.pageData.forEach(e => e._checked = $scope.checkStatus);
     }
@@ -106,7 +111,23 @@ app.controller("optionsCtrl", function ($scope, $http) {
     }
 
     $scope.confirmCourses = function () {
+        $scope.isShowConfirm = false;
+        $scope.msgContent = "";
+        if ($scope.courses.length < 1) $scope.msgContent = "没有数据无法选课";
+        else {
+            let selCourses = getSelCourses();
+            if (selCourses.length < 1) $scope.msgContent = "请至少选择一门课程";
+            else {
+                $scope.msgContent += "是否确认选课并开始学习?";
+                $scope.isShowConfirm = true;
+            }
+        }
         $('#modalMsg').modal('show');
+    }
+
+    $scope.courseAction = function () {
+        $('#modalMsg').modal('hide');
+        getBP().appendCourses(getSelCourses());
     }
 
     initScopeVariables();

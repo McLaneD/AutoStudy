@@ -17,7 +17,7 @@
     <div class="container">
         <div class="row">
             <div class="navbar-left" style="margin-top: 7px;">
-                <span class="text-info" style="font-size: 20px;">公务🐵学习助手</span>
+                <span class="text-info" style="font-size: 20px;">{{appTitle}}</span>
             </div>
             <div class="navbar-right">
                 <span class="text-info" style="font-size:30px">当前用户：{{loginInfo.name}}</span>
@@ -99,12 +99,12 @@
                 </div>
                 <div class="modal-body">
                     <div class="row">
-                        <div class="col-md-12">是否确认选课?</div>
+                        <div class="col-md-12">{{msgContent}}</div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <a type="button" class="btn btn-default" data-dismiss="modal">取消</a>
-                    <a type="button" class="btn btn-primary">确认</a>
+                    <a type="button" class="btn btn-primary" ng-show="isShowConfirm" ng-click="courseAction()">确认</a>
                 </div>
             </div>
         </div>
