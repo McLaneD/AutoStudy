@@ -9,13 +9,48 @@ app.controller("popupCtrl", function ($scope, $http, $httpParamSerializerJQLike)
     const loginUrl = "https://linan.learning.gov.cn/study/login.php";
     const logoutUrl = "https://linan.learning.gov.cn/study/login.php?act=Logout";
 
+    const loopTime = function () {
+        if (null != $scope.playInfo) {
+            let min = $scope.playInfo.min;
+            let sec = $scope.playInfo.sec;
+            sec++;
+            if (sec > 59) {
+                sec = 0;
+                min++;
+            }
+            sec = ((10 > sec > 0) ? "0" : "") + sec;
+            $scope.playInfo.min = min;
+            $scope.playInfo.sec = sec;
+            $scope.$applyAsync();
+        }
+    }
+
+    const getShortDescObj = function (obj, array) {
+        array.forEach(e => { if (obj[e] && obj[e].courseName.length > 10) obj[e].shortName = obj[e].courseName.substring(0, 10) + "..."; });
+        return obj;
+    }
+
     const switchPopupDiv = function (popupName) {
         $scope.currentDiv = popupName;
         if (popupName === $scope.popupDivs.infoDiv) {
             chrome.storage.local.get("loginInfo", (val) => {
                 $scope.loginInfo.name = val.loginInfo.name;
                 $scope.loginInfo.gender = val.loginInfo.gender;
-                $scope.$applyAsync();
+                chrome.storage.local.get("playInfo", (val) => {
+                    if (val.playInfo) {
+                        $scope.showPlayInfo = val.playInfo;
+                        $scope.playInfo = getShortDescObj(val.playInfo, ["pre", "current", "next"]);
+                        let curTime = new Date().getTime();
+                        let min = Math.floor((curTime - val.playInfo.playStartTime) / 1000 % 86400 % 3600 / 60);
+                        let sec = Math.floor((curTime - val.playInfo.playStartTime) / 1000 % 86400 % 3600 % 60);
+                        min = ((10 > min > 0) ? "0" : "") + min;
+                        sec = ((10 > sec > 0) ? "0" : "") + sec;
+                        $scope.playInfo.min = min;
+                        $scope.playInfo.sec = sec;
+                        chrome.storage.local.set({ timeHandler: setInterval(loopTime, 1000) });
+                    }
+                    $scope.$applyAsync();
+                });
             });
         }
     }
@@ -74,6 +109,7 @@ app.controller("popupCtrl", function ($scope, $http, $httpParamSerializerJQLike)
     $scope.logout = function () {
         $http({ method: "GET", url: logoutUrl });
         switchPopupDiv($scope.popupDivs.loginDiv);
+        chrome.storage.local.clear();
         $scope.loginInfo = {};
         $scope.refreshCaptcha();
     }

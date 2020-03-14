@@ -26,7 +26,8 @@
   "permissions": [
     "*://*.learning.gov.cn/*",
     "storage",
-    "cookies"
+    "cookies",
+    "notifications"
   ],
   "homepage_url": "https://en.wikipedia.org/wiki/List_of_freedom_indices"
 }
