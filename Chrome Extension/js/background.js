@@ -47,9 +47,7 @@ function exitStudy(callback) {
                         async: true,
                         cache: false,
                         dataType: 'json',
-                        success: function (data, textStatus) {
-                            callback();
-                        },
+                        success: function (data, textStatus) { callback(); },
                         error: (data) => { notifyError(current, data); }
                     });
 
@@ -82,28 +80,30 @@ function notifySuccess(msg) {
 
 function playCourses(courses) {
     taskQueue = courses;
-    notifySuccess("后台开始自动播放, 您可以关闭选课页面, 但请保持浏览器处于打开状态...");
+    notifySuccess("后台开始自动播放, 您可以关闭选课页面, 但请保持浏览器处于打开状态.");
     loopTaskQueue(null);
 }
 
 function loopTaskQueue(courseID) {
     exitStudy(() => {
-        let taskIndex = -1;
-        for (let i = 0; i < taskQueue.length; i++) {
-            const e = taskQueue[i];
-            if (e.courseID == courseID || !e._played) {
-                taskIndex = i;
-                break;
+        if (taskQueue) {
+            let taskIndex = -1;
+            for (let i = 0; i < taskQueue.length; i++) {
+                const e = taskQueue[i];
+                if ((courseID && e.courseID == courseID) || (null == courseID && !e._played)) {
+                    taskIndex = i;
+                    break;
+                }
             }
-        }
-        if (taskIndex > -1) {
-            playInfo = {
-                pre: playInfo && playInfo.pre ? playInfo.pre : null,
-                current: copyObject(taskQueue[taskIndex]),
-                next: taskIndex < taskQueue.length - 1 ? copyObject(taskQueue[taskIndex + 1]) : null,
-                playStartTime: new Date().getTime()
+            if (taskIndex > -1) {
+                playInfo = {
+                    pre: playInfo && playInfo.pre ? playInfo.pre : null,
+                    current: copyObject(taskQueue[taskIndex]),
+                    next: taskIndex < taskQueue.length - 1 ? copyObject(taskQueue[taskIndex + 1]) : null,
+                    playStartTime: new Date().getTime()
+                }
+                study();
             }
-            study();
         }
     });
 }

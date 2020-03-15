@@ -50,13 +50,12 @@ app.controller("popupCtrl", function ($scope, $http, $httpParamSerializerJQLike)
         $scope.currentDiv = popupName;
         if (popupName === $scope.popupDivs.infoDiv) {
             chrome.storage.local.get("loginInfo", (val) => {
-                $scope.loginInfo.name = val.loginInfo.name;
-                $scope.loginInfo.gender = val.loginInfo.gender;
+                $scope.loginInfo = val.loginInfo;
                 let playInfo = getBP().getPlayInfo();
                 if (playInfo) {
                     $scope.playInfo = getShortDescObj(playInfo, ["pre", "current", "next"]);
                     $scope.playInfo.isPlaying = null != playInfo.pollingHandle;
-                    initTiming();
+                    if ($scope.playInfo.isPlaying) initTiming();
                 }
                 $scope.showPlayInfo = true;
                 $scope.$applyAsync();
@@ -64,11 +63,14 @@ app.controller("popupCtrl", function ($scope, $http, $httpParamSerializerJQLike)
         } else $scope.refreshCaptcha();
     }
 
-    const initScopeVariables = function () {
+    const resetScopeVariables = function () {
+        if (intervalHandle) clearInterval(intervalHandle);
+        intervalHandle = 0;
         $scope.popupDivs = { loginDiv: "loginDiv", infoDiv: "infoDiv" };
         $scope.currentDiv = $scope.popupDivs.loginDiv;
         $scope.loginUser = {};
         $scope.loginInfo = {};
+        $scope.playInfo = {};
         $scope.errorMsg = "";
         $scope.isShowAlertBox = false;
         $scope.captchaUrl = captchaUrl;
@@ -116,32 +118,30 @@ app.controller("popupCtrl", function ($scope, $http, $httpParamSerializerJQLike)
     }
 
     $scope.logout = function () {
+        $('#loadingModal').modal({ backdrop: 'static', keyboard: false });
         $http({ method: "GET", url: logoutUrl }).success(() => {
             getBP().exitStudy(() => {
                 getBP().clearData();
-                $scope.loginInfo = {};
-                switchPopupDiv($scope.popupDivs.loginDiv);
+                resetScopeVariables();
+                $scope.refreshCaptcha();
+                $('#loadingModal').modal('hide');
             });
         });
     }
 
-    $scope.continueStudy = function () {
+    $scope.playContinue = function () {
         $('#loadingModal').modal({ backdrop: 'static', keyboard: false });
         $scope.playInfo.isPlaying = true;
-        getBP().exitStudy(() => {
-            getBP().loopTaskQueue(null);
-            delay(3000);
-            $('#loadingModal').modal('hide');
-        });
+        getBP().loopTaskQueue(null);
+        $('#loadingModal').modal('hide');
         initTiming();
     }
 
-    $scope.pauseStudy = function () {
+    $scope.playPause = function () {
         $('#loadingModal').modal({ backdrop: 'static', keyboard: false });
         $scope.playInfo.isPlaying = false;
         clearInterval(intervalHandle);
         getBP().exitStudy(() => {
-            delay(3000);
             $('#loadingModal').modal('hide');
         });
     }
@@ -164,14 +164,16 @@ app.controller("popupCtrl", function ($scope, $http, $httpParamSerializerJQLike)
     }
 
     $scope.playNext = function () {
-        $('#loadingModal').modal({ backdrop: 'static', keyboard: false });
         let playInfo = getBP().getPlayInfo();
         if (playInfo && playInfo.next) {
+            $('#loadingModal').modal({ backdrop: 'static', keyboard: false });
             getBP().exitStudy(() => {
                 getBP().loopTaskQueue(playInfo.next.courseID);
-                delay(3000);
                 $('#loadingModal').modal('hide');
             });
+        } else {
+            $scope.errorMsg = "没有获取到下一集信息";
+            $scope.showAlertBox();
         }
     }
 
@@ -183,7 +185,7 @@ app.controller("popupCtrl", function ($scope, $http, $httpParamSerializerJQLike)
         return "" !== username && "" !== password && "" !== captcha && null != username && null != password && null !== captcha;
     }
 
-    initScopeVariables();
+    resetScopeVariables();
 
     initPopupPage();
 
@@ -191,8 +193,4 @@ app.controller("popupCtrl", function ($scope, $http, $httpParamSerializerJQLike)
 
 function getBP() {
     return chrome.extension.getBackgroundPage();
-}
-
-function delay(millSeconds) {
-    for (var t = Date.now(); Date.now() - t <= millSeconds;);
 }

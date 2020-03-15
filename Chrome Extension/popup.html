@@ -29,11 +29,6 @@
                     <input type="text" class="form-control" ng-model="loginUser.captcha">
                     <img style="margin-left: 10px;" ng-src="{{newCaptchaUrl}}" ng-click="refreshCaptcha()">
                 </div>
-                <div class="alert alert-danger alert-dismissible" ng-show="isShowAlertBox" role="alert">
-                    <button type="button" class="close" ng-click="hideAlertBox()">
-                        <span aria-hidden="false">&times;</span>
-                    </button> {{errorMsg}}
-                </div>
                 <div class="form-group">
                     <button class="btn btn-default btn-block btn-primary" ng-click="login()">登录</button>
                 </div>
@@ -44,9 +39,9 @@
                 <label for="password" class="control-label" style="margin: 14px 20px 0 0;">欢迎回来!
                     {{loginInfo.name}}{{loginInfo.gender}}</label>
                 <a class="btn-default btn-lg glyphicon glyphicon-play" title="播放" ng-show="!playInfo.isPlaying"
-                    ng-click="continueStudy()"></a>
+                    ng-click="playContinue()"></a>
                 <a class="btn-default btn-lg glyphicon glyphicon-pause" title="暂停" ng-show="playInfo.isPlaying"
-                    ng-click="pauseStudy()"></a>
+                    ng-click="playPause()"></a>
                 <a class="btn-default btn-lg glyphicon glyphicon-forward" title="下一集" ng-click="playNext()"></a>
             </div>
             <div style="margin-bottom: 10px; margin-left: 20px;" ng-show="showPlayInfo">
@@ -71,6 +66,11 @@
                     ng-click="selectLessons()">选课</button>
                 <button class="btn btn-danger btn-sm infobtn" ng-click="logout()">注销</button>
             </div>
+        </div>
+        <div class="alert alert-danger alert-dismissible" ng-show="isShowAlertBox" role="alert">
+            <button type="button" class="close" ng-click="hideAlertBox()">
+                <span aria-hidden="false">&times;</span>
+            </button> {{errorMsg}}
         </div>
         <!-- Loading Effects -->
         <div id="loadingModal" class="modal fade" backdrop="static" keyboard="false"> </div>
