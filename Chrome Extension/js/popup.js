@@ -2,6 +2,8 @@
 
 var app = angular.module("autoStudy_popup", []);
 
+let intervalHandle = 0;
+
 app.controller("popupCtrl", function ($scope, $http, $httpParamSerializerJQLike) {
 
     const captchaUrl = "https://linan.learning.gov.cn/system/akey_img.php?";
@@ -25,6 +27,20 @@ app.controller("popupCtrl", function ($scope, $http, $httpParamSerializerJQLike)
         }
     }
 
+    const initTiming = function () {
+        let playInfo = getBP().getPlayInfo();
+        if (playInfo) {
+            let curTime = new Date().getTime();
+            let min = Math.floor((curTime - playInfo.playStartTime) / 1000 % 86400 % 3600 / 60);
+            let sec = Math.floor((curTime - playInfo.playStartTime) / 1000 % 86400 % 3600 % 60);
+            min = ((10 > min > 0) ? "0" : "") + min;
+            sec = ((10 > sec > 0) ? "0" : "") + sec;
+            $scope.playInfo.min = min;
+            $scope.playInfo.sec = sec;
+            intervalHandle = setInterval(loopTime, 1000);
+        }
+    }
+
     const getShortDescObj = function (obj, array) {
         array.forEach(e => { if (obj[e] && obj[e].courseName.length > 10) obj[e].shortName = obj[e].courseName.substring(0, 10) + "..."; });
         return obj;
@@ -36,23 +52,16 @@ app.controller("popupCtrl", function ($scope, $http, $httpParamSerializerJQLike)
             chrome.storage.local.get("loginInfo", (val) => {
                 $scope.loginInfo.name = val.loginInfo.name;
                 $scope.loginInfo.gender = val.loginInfo.gender;
-                chrome.storage.local.get("playInfo", (val) => {
-                    if (val.playInfo) {
-                        $scope.showPlayInfo = val.playInfo;
-                        $scope.playInfo = getShortDescObj(val.playInfo, ["pre", "current", "next"]);
-                        let curTime = new Date().getTime();
-                        let min = Math.floor((curTime - val.playInfo.playStartTime) / 1000 % 86400 % 3600 / 60);
-                        let sec = Math.floor((curTime - val.playInfo.playStartTime) / 1000 % 86400 % 3600 % 60);
-                        min = ((10 > min > 0) ? "0" : "") + min;
-                        sec = ((10 > sec > 0) ? "0" : "") + sec;
-                        $scope.playInfo.min = min;
-                        $scope.playInfo.sec = sec;
-                        chrome.storage.local.set({ timeHandler: setInterval(loopTime, 1000) });
-                    }
-                    $scope.$applyAsync();
-                });
+                let playInfo = getBP().getPlayInfo();
+                if (playInfo) {
+                    $scope.playInfo = getShortDescObj(playInfo, ["pre", "current", "next"]);
+                    $scope.playInfo.isPlaying = null != playInfo.pollingHandle;
+                    initTiming();
+                }
+                $scope.showPlayInfo = true;
+                $scope.$applyAsync();
             });
-        }
+        } else $scope.refreshCaptcha();
     }
 
     const initScopeVariables = function () {
@@ -107,19 +116,35 @@ app.controller("popupCtrl", function ($scope, $http, $httpParamSerializerJQLike)
     }
 
     $scope.logout = function () {
-        $http({ method: "GET", url: logoutUrl });
-        switchPopupDiv($scope.popupDivs.loginDiv);
-        chrome.storage.local.clear();
-        $scope.loginInfo = {};
-        $scope.refreshCaptcha();
+        $http({ method: "GET", url: logoutUrl })
+            .success(() => {
+                getBP().exitStudy(() => {
+                    getBP().clearData();
+                    $scope.loginInfo = {};
+                    switchPopupDiv($scope.popupDivs.loginDiv);
+                });
+            });
     }
 
     $scope.continueStudy = function () {
-
+        $('#loadingModal').modal({ backdrop: 'static', keyboard: false });
+        $scope.playInfo.isPlaying = true;
+        getBP().exitStudy(() => {
+            getBP().loopTaskQueue(null);
+            delay(3000);
+            $('#loadingModal').modal('hide');
+        });
+        initTiming();
     }
 
     $scope.pauseStudy = function () {
-
+        $('#loadingModal').modal({ backdrop: 'static', keyboard: false });
+        $scope.playInfo.isPlaying = false;
+        clearInterval(intervalHandle);
+        getBP().exitStudy(() => {
+            delay(3000);
+            $('#loadingModal').modal('hide');
+        });
     }
 
     $scope.selectLessons = function () {
@@ -127,7 +152,8 @@ app.controller("popupCtrl", function ($scope, $http, $httpParamSerializerJQLike)
     }
 
     $scope.refreshCaptcha = function () {
-        $scope.captchaUrl = captchaUrl + Math.random();
+        $scope.newCaptchaUrl = captchaUrl + Math.random();
+        $scope.$applyAsync();
     }
 
     $scope.hideAlertBox = function () {
@@ -136,6 +162,10 @@ app.controller("popupCtrl", function ($scope, $http, $httpParamSerializerJQLike)
 
     $scope.showAlertBox = function () {
         $scope.isShowAlertBox = true;
+    }
+
+    $scope.playNext = function () {
+
     }
 
     const validateLoginForm = function () {
@@ -154,4 +184,8 @@ app.controller("popupCtrl", function ($scope, $http, $httpParamSerializerJQLike)
 
 function getBP() {
     return chrome.extension.getBackgroundPage();
+}
+
+function delay(millSeconds) {
+    for (var t = Date.now(); Date.now() - t <= millSeconds;);
 }

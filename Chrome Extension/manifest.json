@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
-  "name": "公务🐵学习助手",
+  "name": "公务员学习助手",
   "version": "0.0.1",
-  "description": "自动学习, 一键🍴🐔",
+  "description": "自动学习, 一键吃鸡",
   "background": {
     "scripts": [
       "js/components/jquery-3.4.1.min.js",

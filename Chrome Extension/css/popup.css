@@ -19,3 +19,15 @@ body {
   width: 130px;
   margin: 0px 0px 0px 3px;
 }
+
+.loadingDiv{
+    width: 200px;
+    height: 100px;
+    z-index: 20000;
+    position: absolute;
+    text-align: center;
+    left: 50%;
+    top: 50%;
+    margin-left: -100px;
+    margin-top: -10px
+}

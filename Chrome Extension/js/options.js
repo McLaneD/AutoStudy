@@ -97,6 +97,7 @@ app.controller("optionsCtrl", function ($scope, $http) {
             let selectAll = true;
             $scope.pagination.startIndex = (page - 1) * $scope.pagination.pageSize + 1;
             $scope.pagination.endIndex = page * $scope.pagination.pageSize;
+            if ($scope.pagination.endIndex > $scope.pagination.dataSize) $scope.pagination.endIndex = $scope.pagination.dataSize;
             for (let i = $scope.pagination.startIndex - 1; i < $scope.pagination.endIndex; i++) {
                 if (i == $scope.courses.length) break;
                 if (!$scope.courses[i]._checked) selectAll = false;
@@ -127,7 +128,7 @@ app.controller("optionsCtrl", function ($scope, $http) {
 
     $scope.courseAction = function () {
         $('#modalMsg').modal('hide');
-        getBP().appendCourses(getSelCourses());
+        getBP().playCourses(getSelCourses());
     }
 
     initScopeVariables();
