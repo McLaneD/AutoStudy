@@ -116,14 +116,13 @@ app.controller("popupCtrl", function ($scope, $http, $httpParamSerializerJQLike)
     }
 
     $scope.logout = function () {
-        $http({ method: "GET", url: logoutUrl })
-            .success(() => {
-                getBP().exitStudy(() => {
-                    getBP().clearData();
-                    $scope.loginInfo = {};
-                    switchPopupDiv($scope.popupDivs.loginDiv);
-                });
+        $http({ method: "GET", url: logoutUrl }).success(() => {
+            getBP().exitStudy(() => {
+                getBP().clearData();
+                $scope.loginInfo = {};
+                switchPopupDiv($scope.popupDivs.loginDiv);
             });
+        });
     }
 
     $scope.continueStudy = function () {
@@ -165,7 +164,15 @@ app.controller("popupCtrl", function ($scope, $http, $httpParamSerializerJQLike)
     }
 
     $scope.playNext = function () {
-
+        $('#loadingModal').modal({ backdrop: 'static', keyboard: false });
+        let playInfo = getBP().getPlayInfo();
+        if (playInfo && playInfo.next) {
+            getBP().exitStudy(() => {
+                getBP().loopTaskQueue(playInfo.next.courseID);
+                delay(3000);
+                $('#loadingModal').modal('hide');
+            });
+        }
     }
 
     const validateLoginForm = function () {

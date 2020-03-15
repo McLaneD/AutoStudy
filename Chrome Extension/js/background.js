@@ -98,6 +98,7 @@ function loopTaskQueue(courseID) {
         }
         if (taskIndex > -1) {
             playInfo = {
+                pre: playInfo && playInfo.pre ? playInfo.pre : null,
                 current: copyObject(taskQueue[taskIndex]),
                 next: taskIndex < taskQueue.length - 1 ? copyObject(taskQueue[taskIndex + 1]) : null,
                 playStartTime: new Date().getTime()
