@@ -20,6 +20,7 @@ app.controller("popupCtrl", function ($scope, $http, $httpParamSerializerJQLike)
                 sec = 0;
                 min++;
             }
+            min = ((10 > min > 0 && !(min + "").startsWith("0")) ? "0" : "") + min;
             sec = ((10 > sec > 0) ? "0" : "") + sec;
             $scope.playInfo.min = min;
             $scope.playInfo.sec = sec;
