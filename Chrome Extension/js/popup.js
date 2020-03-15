@@ -56,8 +56,8 @@ app.controller("popupCtrl", function ($scope, $http, $httpParamSerializerJQLike)
                     $scope.playInfo = getShortDescObj(playInfo, ["pre", "current", "next"]);
                     $scope.playInfo.isPlaying = null != playInfo.pollingHandle;
                     if ($scope.playInfo.isPlaying) initTiming();
+                    $scope.showPlayInfo = true;
                 }
-                $scope.showPlayInfo = true;
                 $scope.$applyAsync();
             });
         } else $scope.refreshCaptcha();

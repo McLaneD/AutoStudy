@@ -35,6 +35,11 @@ body {
     font-size: large;
 }
 
+.success-modal-content {
+    width: fit-content;
+    padding: 0.2rem 0.4rem;
+}
+
 #modalMsg {
    position: absolute;
    top: 50%;

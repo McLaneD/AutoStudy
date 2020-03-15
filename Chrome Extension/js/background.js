@@ -80,7 +80,7 @@ function notifySuccess(msg) {
 
 function playCourses(courses) {
     taskQueue = courses;
-    notifySuccess("后台开始自动播放, 您可以关闭选课页面, 但请保持浏览器处于打开状态.");
+    // notifySuccess("后台开始自动播放, 您可以关闭选课页面, 但请保持浏览器处于打开状态.");
     loopTaskQueue(null);
 }
 
@@ -182,7 +182,7 @@ function pollingCourse() {
                         // TODO 完成的情况下, 是否考虑再播放一段若干时间以模拟真实性
                         let message = '课程"' + current.courseName + '"播放完毕, 获得学分:' + data.credithour + '.';
                         message += null != playInfo.next ? "开始播放下一节..." : "视频播放完毕...";
-                        notifySuccess(message);
+                        // notifySuccess(message);
                         markCoursePlayed(playInfo.current.courseID);
                         playInfo.pre = current;
                         if (playInfo.next) {

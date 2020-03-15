@@ -2,7 +2,7 @@
 
 var app = angular.module("autoStudy_options", []);
 
-app.controller("optionsCtrl", function ($scope, $http) {
+app.controller("optionsCtrl", function ($scope, $http, $timeout) {
 
     $('#loadingModal').modal({ backdrop: 'static', keyboard: false });
 
@@ -128,6 +128,8 @@ app.controller("optionsCtrl", function ($scope, $http) {
 
     $scope.courseAction = function () {
         $('#modalMsg').modal('hide');
+        $('#successModal').modal('show');
+        $timeout(function () { $("#successModal").modal("hide") }, 10000);
         getBP().playCourses(getSelCourses());
     }
 
