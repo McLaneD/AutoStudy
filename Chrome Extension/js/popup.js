@@ -4,7 +4,7 @@ var app = angular.module("autoStudy_popup", []);
 
 let intervalHandle = 0;
 
-app.controller("popupCtrl", function ($scope, $http, $httpParamSerializerJQLike) {
+app.controller("popupCtrl", function ($scope, $http, $httpParamSerializerJQLike, $interval) {
 
     const captchaUrl = "https://linan.learning.gov.cn/system/akey_img.php?";
     const indexUrl = "https://linan.learning.gov.cn";
@@ -38,7 +38,7 @@ app.controller("popupCtrl", function ($scope, $http, $httpParamSerializerJQLike)
             sec = ((10 > sec > 0) ? "0" : "") + sec;
             $scope.playInfo.min = min;
             $scope.playInfo.sec = sec;
-            intervalHandle = setInterval(loopTime, 1000);
+            intervalHandle = $interval(loopTime, 1000);
         }
     }
 
