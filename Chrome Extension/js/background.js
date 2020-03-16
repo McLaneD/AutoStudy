@@ -1,3 +1,5 @@
+"use strict";
+
 const delay = 1200000;
 const countTimeDelay = 180000;
 const requestUrl = "https://linan.learning.gov.cn/study/ajax.php";
@@ -10,7 +12,7 @@ window.onbeforeunload = function () {
 }
 
 function copyObject(obj) {
-    return null == obj ? null : Object.assign({}, obj);
+    return null == obj ? null : JSON.parse(JSON.stringify(obj));
 }
 
 function markCoursePlayed(courseID) {
@@ -50,7 +52,6 @@ function exitStudy(callback) {
                         success: function (data, textStatus) { callback(); },
                         error: (data) => { notifyError(current, data); }
                     });
-
                 },
                 error: (data) => { notifyError(current, data); }
             });
@@ -85,27 +86,25 @@ function playCourses(courses) {
 }
 
 function loopTaskQueue(courseID) {
-    exitStudy(() => {
-        if (taskQueue) {
-            let taskIndex = -1;
-            for (let i = 0; i < taskQueue.length; i++) {
-                const e = taskQueue[i];
-                if ((courseID && e.courseID == courseID) || (null == courseID && !e._played)) {
-                    taskIndex = i;
-                    break;
-                }
-            }
-            if (taskIndex > -1) {
-                playInfo = {
-                    pre: playInfo && playInfo.pre ? playInfo.pre : null,
-                    current: copyObject(taskQueue[taskIndex]),
-                    next: taskIndex < taskQueue.length - 1 ? copyObject(taskQueue[taskIndex + 1]) : null,
-                    playStartTime: new Date().getTime()
-                }
-                study();
+    if (taskQueue) {
+        let taskIndex = -1;
+        for (let i = 0; i < taskQueue.length; i++) {
+            const e = taskQueue[i];
+            if ((courseID && e.courseID == courseID) || (null == courseID && !e._played)) {
+                taskIndex = i;
+                break;
             }
         }
-    });
+        if (taskIndex > -1) {
+            playInfo = {
+                pre: playInfo && playInfo.pre ? playInfo.pre : null,
+                current: copyObject(taskQueue[taskIndex]),
+                next: taskIndex < taskQueue.length - 1 ? copyObject(taskQueue[taskIndex + 1]) : null,
+                playStartTime: new Date().getTime()
+            }
+            study();
+        }
+    }
 }
 
 function study() {
@@ -178,16 +177,48 @@ function pollingCourse() {
                 }
                 else if (data.err == '1') {
                     if (data.examType == 'W' || data.examType == 'E' || data.examType == 'S') {
-                        // TODO 完成的情况下, 是否考虑再播放一段若干时间以模拟真实性
-                        let message = '课程"' + current.courseName + '"播放完毕, 获得学分:' + data.credithour + '.';
-                        message += null != playInfo.next ? "开始播放下一节..." : "视频播放完毕...";
-                        // notifySuccess(message);
                         markCoursePlayed(playInfo.current.courseID);
-                        playInfo.pre = current;
-                        if (playInfo.next) {
-                            playInfo.current = playInfo.next;
-                            loopTaskQueue(playInfo.next.courseID);
-                        } else exitStudy(() => { clearData(); });
+                        exitStudy(() => {
+                            playInfo.pre = current;
+                            if (playInfo.next) {
+                                playInfo.current = playInfo.next;
+                                loopTaskQueue(playInfo.current.courseID);
+                            } else clearData();
+                        });
+                    }
+                } else if (data.err == '0') {
+                    let playTime = parseInt(data.playTime);
+                    if (playTime >= 1200 && playTime % 1200 < (countTimeDelay / 1000)) {
+                        $.ajax({
+                            type: "post",
+                            url: requestUrl,
+                            data: { act: 'updateLastStudyTime' },
+                            async: true,
+                            cache: false,
+                            dataType: 'json',
+                            complete: function (request, textStatus) {
+                                playInfo.isBlocking = true;
+                                if (playInfo.pollingHandle) {
+                                    clearInterval(playInfo.pollingHandle);
+                                    playInfo.pollingHandle = null;
+                                }
+                                setTimeout(() => {
+                                    $.ajax({
+                                        type: "post",
+                                        url: requestUrl,
+                                        data: { act: 'confirmStopTime' },
+                                        async: true,
+                                        cache: false,
+                                        dataType: 'json',
+                                        success: function (data, textStatus) {
+                                            playInfo.isBlocking = false;
+                                            playInfo.pollingHandle = setInterval(pollingCourse, countTimeDelay);
+                                        },
+                                        error: function (data) { }
+                                    });
+                                }, Math.floor(Math.random() * 220000));
+                            }
+                        });
                     }
                 }
             },
