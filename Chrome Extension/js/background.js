@@ -158,7 +158,6 @@ function study() {
         },
         error: (data) => { notifyError(current, data.msg); }
     });
-
 }
 
 function pollingCourse() {
