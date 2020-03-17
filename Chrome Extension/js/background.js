@@ -30,10 +30,9 @@ function clearData() {
 
 function exitStudy(callback) {
     if (playInfo) {
-        if (playInfo.pollingHandle) {
-            clearInterval(playInfo.pollingHandle);
-            playInfo.pollingHandle = null;
-            let current = playInfo.current;
+        clearPollingHandle();
+        let current = playInfo.current;
+        if (current) {
             $.ajax({
                 type: "post",
                 url: requestUrl,
@@ -161,68 +160,72 @@ function study() {
 
 function pollingCourse() {
     let current = playInfo.current;
-    if (playInfo.pollingHandle) {
-        $.ajax({
-            type: "post",
-            url: requestUrl,
-            data: { act: 'update', courseId: current.courseID, logId: playInfo.logId },
-            async: true,
-            cache: false,
-            dataType: 'json',
-            success: function (data, textStatus) {
-                if (data.err < 0) notifyError(current, data.msg);
-                else if (data.err == '2') {
-                    notifyError(current, "您的账号已在其他地方登录,被迫下线");
-                    exitStudy(() => { clearData(); });
-                }
-                else if (data.err == '1') {
-                    if (data.examType == 'W' || data.examType == 'E' || data.examType == 'S') {
-                        markCoursePlayed(playInfo.current.courseID);
+    $.ajax({
+        type: "post",
+        url: requestUrl,
+        data: { act: 'update', courseId: current.courseID, logId: playInfo.logId },
+        async: true,
+        cache: false,
+        dataType: 'json',
+        success: function (data, textStatus) {
+            if (data.err < 0) notifyError(current, data.msg);
+            else if (data.err == '2') {
+                notifyError(current, "您的账号已在其他地方登录,被迫下线");
+                exitStudy(() => { clearData(); });
+            }
+            else if (data.err == '1') {
+                if (data.examType == 'W' || data.examType == 'E' || data.examType == 'S') {
+                    markCoursePlayed(playInfo.current.courseID);
+                    setTimeout(() => {
                         exitStudy(() => {
                             playInfo.pre = current;
                             if (playInfo.next) {
                                 playInfo.current = playInfo.next;
-                                loopTaskQueue(playInfo.current.courseID);
+                                setTimeout(() => { loopTaskQueue(playInfo.current.courseID); }, Math.floor(Math.random * 30000));
                             } else clearData();
                         });
-                    }
-                } else if (data.err == '0') {
-                    let playTime = parseInt(data.playTime);
-                    if (playTime >= 1200 && playTime % 1200 < (countTimeDelay / 1000)) {
-                        $.ajax({
-                            type: "post",
-                            url: requestUrl,
-                            data: { act: 'updateLastStudyTime' },
-                            async: true,
-                            cache: false,
-                            dataType: 'json',
-                            complete: function (request, textStatus) {
-                                playInfo.isBlocking = true;
-                                if (playInfo.pollingHandle) {
-                                    clearInterval(playInfo.pollingHandle);
-                                    playInfo.pollingHandle = null;
-                                }
-                                setTimeout(() => {
-                                    $.ajax({
-                                        type: "post",
-                                        url: requestUrl,
-                                        data: { act: 'confirmStopTime' },
-                                        async: true,
-                                        cache: false,
-                                        dataType: 'json',
-                                        success: function (data, textStatus) {
-                                            playInfo.isBlocking = false;
-                                            playInfo.pollingHandle = setInterval(pollingCourse, countTimeDelay);
-                                        },
-                                        error: function (data) { }
-                                    });
-                                }, Math.floor(Math.random() * 220000));
-                            }
-                        });
-                    }
+                    }, Math.floor(Math.random() * 30000));
                 }
-            },
-            error: (data) => { notifyError(current, data.msg); }
-        });
+            } else if (data.err == '0') {
+                let playTime = parseInt(data.playTime);
+                if (playTime >= 1200 && playTime % 1200 < (countTimeDelay / 1000)) {
+                    $.ajax({
+                        type: "post",
+                        url: requestUrl,
+                        data: { act: 'updateLastStudyTime' },
+                        async: true,
+                        cache: false,
+                        dataType: 'json',
+                        complete: function (request, textStatus) {
+                            playInfo.isBlocking = true;
+                            clearPollingHandle();
+                            setTimeout(() => {
+                                $.ajax({
+                                    type: "post",
+                                    url: requestUrl,
+                                    data: { act: 'confirmStopTime' },
+                                    async: true,
+                                    cache: false,
+                                    dataType: 'json',
+                                    success: function (data, textStatus) {
+                                        playInfo.isBlocking = false;
+                                        playInfo.pollingHandle = setInterval(pollingCourse, countTimeDelay);
+                                    },
+                                    error: function (data) { }
+                                });
+                            }, Math.floor(Math.random() * 120000));
+                        }
+                    });
+                }
+            }
+        },
+        error: (data) => { notifyError(current, data.msg); }
+    });
+}
+
+function clearPollingHandle() {
+    if (playInfo.pollingHandle) {
+        clearInterval(playInfo.pollingHandle);
+        playInfo.pollingHandle = null;
     }
 }
