@@ -54,8 +54,11 @@ app.controller("optionsCtrl", function ($scope, $http, $timeout) {
     const retrieveAllCourses = function () {
         $http({ method: "GET", url: coursesUrl }).success((response) => {
             let docBody = new DOMParser().parseFromString(response, 'text/html').body;
-            let pageContent = docBody.children[9].children[1].children[1].children[0].children[1].children[1].children[0].children[0].children[0].children[0].children[0].innerText;
-            parseCoursesData(1, parseInt(pageContent.substring(pageContent.indexOf("条") + 2, pageContent.indexOf("页") - 1)), []);
+            let pageDiv = docBody.children[9].children[1].children[1].children[0].children[1].children[1];
+            if (pageDiv.childElementCount > 0) {
+                let pageContent = pageDiv.children[0].children[0].children[0].children[0].children[0].innerText;
+                parseCoursesData(1, parseInt(pageContent.substring(pageContent.indexOf("条") + 2, pageContent.indexOf("页") - 1)), []);
+            } else $('#loadingModal').modal('hide');
         });
     }
 
@@ -114,7 +117,7 @@ app.controller("optionsCtrl", function ($scope, $http, $timeout) {
     $scope.confirmCourses = function () {
         $scope.isShowConfirm = false;
         $scope.msgContent = "";
-        if ($scope.courses.length < 1) $scope.msgContent = "没有数据无法选课";
+        if (!$scope.courses || $scope.courses.length < 1) $scope.msgContent = "没有数据无法选课";
         else {
             let selCourses = getSelCourses();
             if (selCourses.length < 1) $scope.msgContent = "请至少选择一门课程";
