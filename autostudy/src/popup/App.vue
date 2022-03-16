@@ -8,16 +8,18 @@
       size="medium"
     >
       <el-row>
-        <el-col :span="24"
-          ><el-form-item label="用户名" prop="username">
-            <el-input v-model="form.username" /> </el-form-item
-        ></el-col>
+        <el-col :span="24">
+          <el-form-item label="用户名" prop="username">
+            <el-input v-model="form.username" />
+          </el-form-item>
+        </el-col>
       </el-row>
       <el-row>
         <el-col :span="24">
           <el-form-item label="密码" prop="password">
-            <el-input v-model="form.password" show-password /> </el-form-item
-        ></el-col>
+            <el-input v-model="form.password" show-password />
+          </el-form-item>
+        </el-col>
       </el-row>
       <el-row>
         <el-col :span="13">
@@ -42,8 +44,8 @@
               >登录</el-button
             >
             <el-button type="info" @click="cancel()">取消</el-button>
-          </el-form-item></el-col
-        >
+          </el-form-item>
+        </el-col>
       </el-row>
     </el-form>
   </div>
